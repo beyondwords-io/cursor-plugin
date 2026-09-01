@@ -1,0 +1,14 @@
+{
+  "name": "beyondwords",
+  "description": "Manage BeyondWords text-to-speech projects, content, voices and pronunciation rules from Cursor.",
+  "version": "0.1.0",
+  "author": {
+    "name": "BeyondWords",
+    "email": "support@beyondwords.io"
+  },
+  "homepage": "https://beyondwords.io",
+  "repository": "https://github.com/beyondwords-io/cursor-plugin",
+  "license": "MIT",
+  "keywords": ["beyondwords", "text-to-speech", "audio", "tts", "publishing", "mcp"],
+  "logo": "assets/logo.svg"
+}
