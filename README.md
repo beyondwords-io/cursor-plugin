@@ -1,51 +1,99 @@
-# BeyondWords for Cursor
+# BeyondWords plugin for Cursor
 
-[BeyondWords](https://beyondwords.io) is a text-to-speech platform for publishers. This plugin connects Cursor to the
-BeyondWords MCP server, so an agent can work with your projects, content, voices and pronunciation rules directly.
+The official [BeyondWords](https://beyondwords.io/) plugin for [Cursor](https://cursor.com/). It securely connects
+Cursor to the BeyondWords MCP, allowing the agent to manage projects, create and update audio, configure voices, add
+pronunciation rules, explore analytics, update player settings, and more.
 
-## Install
+Work with your BeyondWords account using natural-language prompts, and combine BeyondWords data and actions with
+Cursor's understanding of your codebase and other connected tools.
 
-Install the plugin from the Cursor marketplace, or clone this repository into `~/.cursor/plugins/local/beyondwords`
-and reload the window.
+## Installation
 
-## Authentication
+### Prerequisites
 
-The plugin talks to `https://mcp.beyondwords.io/api`, an OAuth 2.1 protected MCP server. There is nothing to paste:
-Cursor discovers the authorization server, registers itself and opens a browser sign-in the first time a tool is
-called. Approve the request with the BeyondWords account whose projects you want to use.
+You'll need:
 
-Two scopes are requested:
+- A [BeyondWords](https://beyondwords.io/) account
+- A [Cursor](https://cursor.com/) account
 
-- `api.read` — list and read projects, content, voices, languages, rules, analytics and player settings.
-- `api.write` — create, update, duplicate, regenerate and delete those resources.
+### Install from the Cursor Marketplace
 
-Write tools are hidden from the agent unless the granted token carries `api.write`, so a read-only grant exposes a
-read-only tool set.
+1. Open **Cursor Settings**
+2. Go to **Customize → Plugins**
+3. Search for **BeyondWords**
+4. Click **Add** next to the BeyondWords plugin
+5. Follow the [Authentication](#authenticate) steps
+
+### Install locally
+
+For local development or manual installation, clone this repository into Cursor's local plugins directory:
+
+```sh
+git clone https://github.com/beyondwords-io/cursor-plugin.git ~/.cursor/plugins/local/beyondwords
+```
+
+Reload Cursor by opening the Command Palette and selecting **Developer: Reload Window**.
+
+### Authenticate
+
+After installing the plugin, ask Cursor:
+
+> List my BeyondWords projects
+
+Cursor will prompt you to authenticate your account. Click **Authenticate** to open the BeyondWords login page in your
+browser. Sign in with the BeyondWords account whose project(s) you want to access, then approve the requested
+permissions.
+
+Two scopes are available:
+
+- `api.read` — List and view projects, content, playlists, voices, languages, pronunciation rules, analytics, and
+  player settings
+- `api.write` — Create, update, duplicate, regenerate, and delete supported resources
+
+Write tools are only available when the granted token includes `api.write`. A read-only grant therefore exposes a
+read-only set of tools to the agent.
+
+> [!NOTE]
+> The plugin connects to `https://mcp.beyondwords.io/api`, an OAuth 2.1–protected MCP server. There are no API keys or
+> credentials to copy into Cursor.
 
 ## Tools
 
-26 tools, grouped by resource:
+The plugin provides 33 tools for working with your BeyondWords account. Tools are grouped by resource and separated by
+the permission they require.
 
-| Group      | Read                                           | Write                                                                                           |
-| ---------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Projects   | `list_projects`, `get_project`                 | `create_project`, `update_project`                                                              |
-| Content    | `list_content`, `get_content`                  | `create_content`, `update_content`, `regenerate_content`, `duplicate_content`, `delete_content` |
-| Analytics  | `get_analytics`                                | —                                                                                               |
-| Voices     | `list_voices`, `get_voice`                     | `update_voice`, `delete_voice`                                                                  |
-| Languages  | `list_languages`                               | —                                                                                               |
-| Rules      | `list_rules`, `get_rule`, `list_rule_phonemes` | `create_rule`, `update_rule`, `delete_rule`, `transcribe_rule_text`                             |
-| Settings   | `get_player_settings`                          | `update_player_settings`                                                                        |
+| Resource            | Read tools (`api.read`)                                        | Write tools (`api.write`)                                                                      |
+| ------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Projects            | `list_projects`, `get_project`                                 | `create_project`, `update_project`                                                             |
+| Content             | `list_content`, `get_content`                                  | `create_content`, `update_content`, `regenerate_content`, `duplicate_content`, `delete_content` |
+| Analytics           | `get_analytics`                                                | —                                                                                              |
+| Voices              | `list_voices`, `get_voice`                                     | `update_voice`, `delete_voice`                                                                 |
+| Languages           | `list_languages`                                               | —                                                                                              |
+| Playlists           | `list_playlists`, `get_playlist`, `get_playlist_feed_settings` | `create_playlist`, `update_playlist`, `delete_playlist`, `update_playlist_feed_settings`       |
+| Pronunciation rules | `list_rules`, `get_rule`, `list_rule_phonemes`                 | `create_rule`, `update_rule`, `delete_rule`, `transcribe_rule_text`                            |
+| Player settings     | `get_player_settings`                                          | `update_player_settings`                                                                       |
 
-`delete_content`, `delete_voice` and `delete_rule` are annotated as destructive; every other tool is annotated
-read-only or as a non-destructive write, so Cursor can prompt appropriately.
+The tools available to Cursor depend on the permissions granted during authentication. A token with only `api.read`
+exposes the read tools, while a token with `api.write` also exposes tools that can modify your account.
+
+`delete_content`, `delete_playlist`, `delete_voice`, and `delete_rule` are marked as destructive, as are
+`update_content` and `regenerate_content`, which replace an item's existing audio. Cursor can therefore request
+appropriate confirmation. All other tools are marked as read-only or as non-destructive writes.
 
 ## Example prompts
 
-- "List my BeyondWords projects and show last week's listens for the main one."
-- "Create content in project 1234 from this article URL and tell me when the audio is ready."
-- "Add a pronunciation rule so 'BeyondWords' is read as one word, then show the phonemes."
+- "List my BeyondWords projects and show the number of listens each received last week"
+- "Create content in project 1234 from https://example.com/my-article and tell me when the audio is ready"
+- "Add a pronunciation rule to my NE Daily project so that 'NCL' is pronounced 'Newcastle'"
+- "Show me my best-performing audio content from the past 30 days"
+- "Update the BeyondWords player colors to match the styles in this codebase"
 
 ## Support
 
-[support@beyondwords.io](mailto:support@beyondwords.io) · [Documentation](https://docs.beyondwords.io) ·
-[Privacy policy](https://beyondwords.io/privacy/)
+If the plugin is unavailable, check the BeyondWords connection under **Cursor Settings → Tools & MCP**.
+
+For help using the BeyondWords for Cursor plugin:
+
+- Email [support@beyondwords.io](mailto:support@beyondwords.io).
+- View the [BeyondWords MCP doc](https://docs.beyondwords.io/docs-and-guides/support/beyondwords-mcp).
+- Read the [BeyondWords privacy policy](https://beyondwords.io/privacy/).
